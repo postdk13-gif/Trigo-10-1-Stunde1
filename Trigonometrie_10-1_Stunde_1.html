@@ -73,7 +73,7 @@
 <div class="wrap">
   <header>
     <h1>Trigonometrie, Stunde 1</h1>
-    <p>Mathematik Klasse 10.1, Übung zur Klassenarbeit mit Selbstkontrolle. Rechne auf einem Extrablatt in deinem Hefter. Runde Längen auf zwei und Winkel auf eine Nachkommastelle.</p>
+    <p>Mathematik Klasse 10.1, Übung zur Klassenarbeit mit Selbstkontrolle. Rechne auf einem Extrablatt in deinem Hefter. Runde Längen auf zwei und Winkel auf eine Nachkommastelle. Unten rechts findest du einen Taschenrechner (Gradmaß DEG).</p>
     <p>So gehst du vor: Löse jede Aufgabe zuerst selbst im Heft. Trage dann dein Ergebnis ein und klicke auf „Prüfen“. Danach kannst du dir den Lösungsvorschlag ansehen und mit deinem Weg vergleichen. Einheiten musst du nicht mit eintippen, Komma oder Punkt ist egal.</p>
   </header>
 
@@ -422,7 +422,7 @@ function render(){
     t.parts.forEach((p,j)=>{
       if(p.type==="num" || p.type==="text"){
         html += `<div class="field"><label for="in${i}_${j}">${p.label||"Antwort:"}</label>
-          <input type="text" ${p.type==="num"?'inputmode="decimal"':'class="wide"'} autocomplete="off" autocapitalize="off" spellcheck="false" id="in${i}_${j}">
+          <input type="text" inputmode="text" ${p.type==="num"?'':'class="wide"'} autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" id="in${i}_${j}">
           ${p.unit?`<span class="unit">${p.unit}</span>`:""}</div>`;
       } else {
         html += `<div class="mc" role="group" aria-label="Antwortmöglichkeiten">${p.options.map((o,k)=>
@@ -532,5 +532,94 @@ document.getElementById("reset").addEventListener("click",()=>{
 
 render(); updateScore();
 </script>
+<style>
+  #trToggle{position:fixed;right:14px;bottom:14px;z-index:30;font:inherit;font-size:1rem;font-weight:600;padding:11px 16px;border-radius:30px;border:2px solid var(--blue);background:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer}
+  #trPanel{position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:31;width:min(100%,430px);background:#fff;border:2px solid var(--blue);border-bottom:none;border-radius:14px 14px 0 0;box-shadow:0 -4px 16px rgba(0,0,0,.2);padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px))}
+  #trPanel[hidden]{display:none}
+  .tr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--blue);font-weight:700}
+  .tr-top small{font-weight:600;color:var(--muted);margin-left:6px;border:1px solid var(--line);border-radius:4px;padding:0 5px}
+  .tr-x{font:inherit;font-size:1.3rem;line-height:1;border:none;background:none;color:var(--muted);cursor:pointer;padding:4px 8px}
+  .tr-disp{background:var(--blue-soft);border-radius:6px;padding:6px 10px;margin-bottom:8px;text-align:right;min-height:64px}
+  .tr-expr{font-size:1.05rem;color:var(--ink);word-break:break-all;min-height:1.5em}
+  .tr-res{font-size:1.45rem;font-weight:700;color:var(--blue);min-height:1.3em}
+  .tr-keys{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .tr-keys button{font:inherit;font-size:1.05rem;padding:10px 0;border-radius:7px;border:1px solid var(--line);background:#f6f8fc;color:var(--ink);cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+  .tr-keys button.f{font-size:.92rem;background:#eef2fa;color:var(--blue)}
+  .tr-keys button.o{background:#e8eefa;color:var(--blue);font-weight:700}
+  .tr-keys button.c{background:var(--red-soft);color:var(--red);font-weight:700}
+  .tr-keys button.eq{background:var(--blue);color:#fff;font-weight:700;border-color:var(--blue)}
+  .tr-keys button:active{filter:brightness(.9)}
+  .tr-use{margin-top:8px;width:100%;font:inherit;font-weight:600;padding:9px;border-radius:7px;border:2px solid var(--green);background:var(--green-soft);color:var(--green);cursor:pointer}
+  .tr-use:disabled{opacity:.45;cursor:not-allowed}
+  body.tr-open .wrap{padding-bottom:470px}
+</style>
+<button id="trToggle" type="button" aria-expanded="false" aria-controls="trPanel">🧮 Rechner</button>
+<div id="trPanel" role="dialog" aria-label="Taschenrechner" hidden>
+  <div class="tr-top"><span>Taschenrechner<small>DEG</small></span><button class="tr-x" type="button" id="trClose" aria-label="Taschenrechner schließen">✕</button></div>
+  <div class="tr-disp"><div class="tr-expr" id="trExpr"></div><div class="tr-res" id="trRes" aria-live="polite"></div></div>
+  <div class="tr-keys" id="trKeys">
+    <button class="f" data-k="sin(">sin</button><button class="f" data-k="cos(">cos</button><button class="f" data-k="tan(">tan</button><button class="f" data-k="√(">√</button><button class="f" data-k="²">x²</button>
+    <button class="f" data-k="sin⁻¹(">sin⁻¹</button><button class="f" data-k="cos⁻¹(">cos⁻¹</button><button class="f" data-k="tan⁻¹(">tan⁻¹</button><button class="o" data-k="(">(</button><button class="o" data-k=")">)</button>
+    <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button class="o" data-k="÷">÷</button><button class="c" data-k="AC">AC</button>
+    <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button class="o" data-k="×">×</button><button class="c" data-k="DEL" aria-label="Löschen">⌫</button>
+    <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button class="o" data-k="−">−</button><button class="f" data-k="π">π</button>
+    <button data-k="0">0</button><button data-k=",">,</button><button class="f" data-k="Ans">Ans</button><button class="o" data-k="+">+</button><button class="eq" data-k="=">=</button>
+  </div>
+  <button class="tr-use" type="button" id="trUse" disabled>Ergebnis ins Antwortfeld übernehmen</button>
+</div>
+<script>
+(function(){
+  const D=Math.PI/180, FN={"sin(":x=>Math.sin(x*D),"cos(":x=>Math.cos(x*D),"tan(":x=>Math.tan(x*D),
+    "sin⁻¹(":x=>Math.asin(x)/D,"cos⁻¹(":x=>Math.acos(x)/D,"tan⁻¹(":x=>Math.atan(x)/D,"√(":x=>Math.sqrt(x)};
+  let toks=[], ans=0, result=null, justEval=false, lastInput=null;
+  const $=id=>document.getElementById(id), panel=$("trPanel"), tog=$("trToggle");
+  document.addEventListener("focusin",e=>{ if(e.target.matches&&e.target.matches("input[type=text]")) lastInput=e.target; });
+  function fmt(v){ if(!isFinite(v)) return "Fehler"; let r=Math.abs(v)<1e-12?0:+v.toPrecision(10);
+    let s=String(r); if(/e/.test(s)) s=r.toExponential(6); return s.replace("-","−").replace(".",","); }
+  function show(){ $("trExpr").textContent=toks.join("").replace(/Ans/g,"Ans"); $("trRes").textContent=result===null?"":"= "+fmt(result);
+    $("trUse").disabled=!(result!==null&&isFinite(result)&&lastInput); }
+  function evaluate(){
+    let i=0;
+    const peek=()=>toks[i];
+    const startsFactor=t=>t!==undefined&&(/^[0-9,]$/.test(t)||t==="("||t==="π"||t==="Ans"||t in FN);
+    function number(){ let s=""; while(i<toks.length&&/^[0-9,]$/.test(toks[i])) s+=toks[i++]; s=s.replace(",","."); if(s.split(".").length>2||s===".") throw 0; return parseFloat(s); }
+    function primary(){
+      const t=peek(); if(t===undefined) throw 0;
+      if(/^[0-9,]$/.test(t)) return number();
+      if(t==="π"){i++;return Math.PI;} if(t==="Ans"){i++;return ans;}
+      if(t==="("){i++;const v=expr(); if(peek()===")") i++; return v;}
+      if(t in FN){i++;const v=expr(); if(peek()===")") i++; return FN[t](v);}
+      throw 0;
+    }
+    function postfix(){ let v=primary(); while(peek()==="²"){i++;v=v*v;} return v; }
+    function unary(){ if(peek()==="−"){i++;return -unary();} if(peek()==="+"){i++;return unary();} return postfix(); }
+    function term(){ let v=unary();
+      for(;;){ const t=peek();
+        if(t==="×"){i++;v*=unary();} else if(t==="÷"){i++;v/=unary();}
+        else if(startsFactor(t)){v*=unary();} else return v; } }
+    function expr(){ let v=term(); for(;;){ const t=peek(); if(t==="+"){i++;v+=term();} else if(t==="−"){i++;v-=term();} else return v; } }
+    const v=expr(); if(i<toks.length) throw 0; return v;
+  }
+  function press(k){
+    if(k==="AC"){toks=[];result=null;justEval=false;}
+    else if(k==="DEL"){ if(justEval){toks=[];result=null;justEval=false;} else toks.pop(); }
+    else if(k==="="){ if(!toks.length) return; try{ result=evaluate(); if(isFinite(result)) ans=result; }catch(e){ result=NaN; } justEval=true; }
+    else{
+      if(justEval){ if(["+","−","×","÷","²"].includes(k)&&result!==null&&isFinite(result)) toks=["Ans"]; else toks=[]; result=null; justEval=false; }
+      toks.push(k);
+    }
+    show();
+  }
+  $("trKeys").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b) press(b.dataset.k); });
+  $("trKeys").addEventListener("mousedown",e=>e.preventDefault());
+  function setOpen(o){ panel.hidden=!o; tog.hidden=o; tog.setAttribute("aria-expanded",o); document.body.classList.toggle("tr-open",o);
+    if(o&&document.activeElement&&document.activeElement.blur) document.activeElement.blur(); show(); }
+  tog.addEventListener("click",()=>setOpen(true)); $("trClose").addEventListener("click",()=>setOpen(false));
+  $("trUse").addEventListener("click",()=>{ if(!lastInput||result===null||!isFinite(result)) return;
+    lastInput.value=fmt(result).replace("−","-"); lastInput.dispatchEvent(new Event("input",{bubbles:true}));
+    window.scrollTo({top:lastInput.getBoundingClientRect().top+window.scrollY-130,behavior:"smooth"}); });
+})();
+</script>
+
 </body>
 </html>
