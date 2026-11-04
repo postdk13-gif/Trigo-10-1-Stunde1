@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trigonometrie Stunde 1, Klasse 10.1</title>
+<style>
+  :root{
+    --paper:#fdfdfb; --grid:#e3ebf5; --ink:#1d2433; --blue:#1f4fa3; --blue-soft:#e8eefa;
+    --red:#c22f3a; --red-soft:#fbe9ea; --green:#2c7a4b; --green-soft:#e5f3ea; --muted:#5d6678; --line:#c9d3e2;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; color:var(--ink); font:17px/1.55 "Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    background-color:var(--paper);
+    background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+    background-size:22px 22px;
+  }
+  .wrap{max-width:780px;margin:0 auto;padding:28px 18px 80px}
+  header h1{font-family:Georgia,"Times New Roman",serif;font-size:2rem;line-height:1.2;margin:0 0 6px;color:var(--blue)}
+  header p{margin:0 0 6px;color:var(--muted)}
+  .bar{position:sticky;top:0;z-index:5;background:rgba(253,253,251,.96);border-bottom:2px solid var(--blue);
+       margin:18px -18px 22px;padding:10px 18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .meter{flex:1;min-width:160px;height:12px;background:var(--blue-soft);border-radius:6px;overflow:hidden}
+  .meter span{display:block;height:100%;width:0;background:var(--green);transition:width .4s}
+  .score{font-weight:600;white-space:nowrap}
+  .task{background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:6px;
+        padding:16px 18px 14px;margin:0 0 18px}
+  .task.done{border-left-color:var(--green)}
+  .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+  .num{font-family:Georgia,serif;font-size:1.35rem;font-weight:700;color:var(--blue)}
+  .src{font-size:.82rem;color:var(--muted);text-align:right}
+  .q{margin:2px 0 10px}
+  .field{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0}
+  input[type=text]{font:inherit;font-size:1.05rem;padding:7px 10px;width:150px;border:none;border-bottom:2px solid var(--blue);
+        background:var(--blue-soft);border-radius:4px 4px 0 0;color:var(--blue)}
+  input.wide{width:min(100%,320px)}
+  input[type=text]:focus{outline:3px solid #9fb8e6;outline-offset:1px}
+  input.ok{border-bottom-color:var(--green);background:var(--green-soft);color:var(--green)}
+  input.no{border-bottom-color:var(--red);background:var(--red-soft);color:var(--red)}
+  .unit{color:var(--muted)}
+  .mc{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+  .mc button{font:inherit;padding:7px 14px;border:2px solid var(--line);background:#fff;border-radius:6px;cursor:pointer;color:var(--ink)}
+  .mc button[aria-pressed=true]{border-color:var(--blue);background:var(--blue-soft);color:var(--blue);font-weight:600}
+  .mc button.ok{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+  .mc button.no{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .btn{font:inherit;font-size:.95rem;padding:7px 14px;border-radius:6px;cursor:pointer;border:2px solid var(--blue);background:var(--blue);color:#fff}
+  .btn.ghost{background:#fff;color:var(--blue)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn:focus-visible,.mc button:focus-visible{outline:3px solid #9fb8e6;outline-offset:2px}
+  .fb{margin-top:8px;font-weight:600;min-height:1.2em}
+  .fb.ok{color:var(--green)} .fb.no{color:var(--red)}
+  .box{margin-top:10px;padding:12px 14px;border-radius:6px;font-size:.97rem}
+  .tip{background:#fff8e1;border:1px dashed #d9b44a}
+  .sol{background:var(--green-soft);border:1px solid #b9dcc6}
+  .sol h4{margin:0 0 6px;font-size:1rem;color:var(--green)}
+  .sol .alt{margin-top:8px;padding-top:8px;border-top:1px dashed #9ccab0}
+  .calc{font-family:Georgia,serif;font-size:1.02rem}
+  table.wt{border-collapse:collapse;margin:6px 0}
+  table.wt td,table.wt th{border:1px solid var(--line);padding:4px 12px;text-align:center}
+  svg{max-width:100%;height:auto}
+  .end{background:#fff;border:2px solid var(--blue);border-radius:8px;padding:18px;margin-top:26px}
+  .end h2{font-family:Georgia,serif;margin:0 0 8px;color:var(--blue)}
+  footer{margin-top:30px;font-size:.82rem;color:var(--muted)}
+  @media (max-width:520px){ body{font-size:16px} header h1{font-size:1.6rem} .head{flex-direction:column;gap:0} .src{text-align:left} }
+  @media (prefers-reduced-motion:reduce){ .meter span{transition:none} }
+  @media print{ .bar,.actions,.fb{display:none} body{background:none} .task{break-inside:avoid} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Trigonometrie, Stunde 1</h1>
+    <p>Mathematik Klasse 10.1, Übung zur Klassenarbeit mit Selbstkontrolle. Rechne auf einem Extrablatt in deinem Hefter. Runde Längen auf zwei und Winkel auf eine Nachkommastelle.</p>
+    <p>So gehst du vor: Löse jede Aufgabe zuerst selbst im Heft. Trage dann dein Ergebnis ein und klicke auf „Prüfen“. Danach kannst du dir den Lösungsvorschlag ansehen und mit deinem Weg vergleichen. Einheiten musst du nicht mit eintippen, Komma oder Punkt ist egal.</p>
+  </header>
+
+  <div class="bar" role="status" aria-live="polite">
+    <div class="meter" aria-hidden="true"><span id="meter"></span></div>
+    <div class="score" id="score">0 Punkte</div>
+    <button class="btn ghost" id="reset" type="button">Neu starten</button>
+  </div>
+
+  <main id="tasks"></main>
+
+  <section class="end" id="end">
+    <h2>Deine Auswertung</h2>
+    <p id="endText">Bearbeite die Aufgaben und klicke dann hier auf „Auswerten“.</p>
+    <button class="btn" id="evalBtn" type="button">Auswerten</button>
+  </section>
+
+  <footer>Aufgaben aus dem Unterricht der Klasse 10.1. Bei den Berechnungen zeigt der Lösungsvorschlag, wo möglich, zwei Wege, einmal mit dem Sinussatz und einmal am rechtwinkligen Dreieck. Die Seite speichert keine Eingaben und sendet keine Daten.</footer>
+</div>
+
+<script>
+/* Aufgabentypen:
+   "num"  Zahlenfeld, accept = Liste akzeptierter Zahlen (z. B. Rundungsvarianten, andere Einheiten)
+   "mc"   Auswahl, options = Liste, correct = Index der richtigen Option
+   "text" Kurzantwort, accept = Liste akzeptierter Wörter/Begriffe (Groß-/Kleinschreibung egal)
+   Optional pro Aufgabe: fig (SVG/HTML), points (Gesamtpunkte, nur bei komplett richtig), alt (Auch-richtig-Hinweis) */
+const T = [
+ {
+  "src": "Stunde 1, A1",
+  "q": "Gib 10 % von 60 € an.",
+  "parts": [
+   {
+    "type": "num",
+    "label": "",
+    "unit": "€",
+    "accept": [
+     6
+    ]
+   }
+  ],
+  "tip": "10 % ist ein Zehntel.",
+  "sol": "<p class=\"calc\">60 € : 10 = <b>6 €</b></p>"
+ },
+ {
+  "src": "Stunde 1, A2",
+  "q": "Löse die Gleichung x − 4 = 9.",
+  "parts": [
+   {
+    "type": "num",
+    "label": "x =",
+    "unit": "",
+    "accept": [
+     13
+    ]
+   }
+  ],
+  "tip": "Was musst du auf beiden Seiten tun, damit x allein steht?",
+  "sol": "<p class=\"calc\">x − 4 = 9 &nbsp;&nbsp;| + 4<br><b>x = 13</b></p>"
+ },
+ {
+  "src": "Stunde 1, A3",
+  "q": "Rechne um. 2,4 m = ? cm",
+  "parts": [
+   {
+    "type": "num",
+    "label": "",
+    "unit": "cm",
+    "accept": [
+     240
+    ]
+   }
+  ],
+  "tip": "1 m hat 100 cm.",
+  "sol": "<p class=\"calc\">2,4 · 100 = <b>240 cm</b></p>"
+ },
+ {
+  "src": "Stunde 1, A4",
+  "q": "Dreieck ABC mit γ = 90°. Gib die Hypotenuse an.",
+  "parts": [
+   {
+    "type": "text",
+    "label": "Hypotenuse:",
+    "accept": [
+     "c",
+     "Seite c",
+     "AB",
+     "BA",
+     "Strecke AB",
+     "die Seite c",
+     "Seite AB"
+    ]
+   }
+  ],
+  "tip": "Die Hypotenuse liegt dem rechten Winkel gegenüber.",
+  "sol": "<p>Der rechte Winkel liegt bei C. Gegenüber liegt die Seite <b>c</b> (Strecke AB).</p>",
+  "fig": "<svg viewBox=\"0 0 320 200\" width=\"100%\" style=\"max-width:320px\" role=\"img\" aria-label=\"Dreieck ABC mit rechtem Winkel bei C\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\" font-size=\"15\"><polygon points=\"30,170 290,170 85.4,63.5\" fill=\"#fdecea\" stroke=\"#333\" stroke-width=\"2\"/><polyline points=\"79.9,74.2 90.5,79.7 96.1,69.1\" fill=\"none\" stroke=\"#333\"/><text x=\"8\" y=\"176\">A</text><text x=\"298\" y=\"176\">B</text><text x=\"80\" y=\"54\">C</text><text x=\"196\" y=\"113\" font-style=\"italic\">a</text><text x=\"40\" y=\"117\" font-style=\"italic\">b</text><text x=\"160\" y=\"192\" font-style=\"italic\">c</text><text x=\"60\" y=\"162\">α</text><text x=\"250\" y=\"162\">β</text></svg>",
+  "alt": "Auch richtig: AB"
+ },
+ {
+  "src": "Stunde 1, A5",
+  "q": "Dreieck ABC mit γ = 90°. Gib die Ankathete von α an.",
+  "parts": [
+   {
+    "type": "text",
+    "label": "Ankathete:",
+    "accept": [
+     "b",
+     "Seite b",
+     "AC",
+     "CA",
+     "Strecke AC",
+     "Seite AC"
+    ]
+   }
+  ],
+  "tip": "Die Ankathete liegt am Winkel α an, ist aber nicht die Hypotenuse.",
+  "sol": "<p>Am Winkel α liegen die Seiten b und c an. c ist die Hypotenuse, also ist die Ankathete <b>b</b> (Strecke AC).</p>",
+  "fig": "<svg viewBox=\"0 0 320 200\" width=\"100%\" style=\"max-width:320px\" role=\"img\" aria-label=\"Dreieck ABC mit rechtem Winkel bei C\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\" font-size=\"15\"><polygon points=\"30,170 290,170 85.4,63.5\" fill=\"#fdecea\" stroke=\"#333\" stroke-width=\"2\"/><polyline points=\"79.9,74.2 90.5,79.7 96.1,69.1\" fill=\"none\" stroke=\"#333\"/><text x=\"8\" y=\"176\">A</text><text x=\"298\" y=\"176\">B</text><text x=\"80\" y=\"54\">C</text><text x=\"196\" y=\"113\" font-style=\"italic\">a</text><text x=\"40\" y=\"117\" font-style=\"italic\">b</text><text x=\"160\" y=\"192\" font-style=\"italic\">c</text><text x=\"60\" y=\"162\">α</text><text x=\"250\" y=\"162\">β</text></svg>",
+  "alt": "Auch richtig: AC"
+ },
+ {
+  "src": "Stunde 1, A6",
+  "q": "Dreieck ABC mit γ = 90°. Gib sin α als Seitenverhältnis an.",
+  "parts": [
+   {
+    "type": "text",
+    "label": "sin α =",
+    "accept": [
+     "a/c",
+     "a / c",
+     "a:c",
+     "a : c",
+     "a durch c",
+     "a geteilt durch c",
+     "bc/ab",
+     "bc / ab",
+     "bc:ab",
+     "bc : ab",
+     "bc durch ab",
+     "bc geteilt durch ab",
+     "cb/ab",
+     "cb / ab",
+     "cb:ab",
+     "cb : ab",
+     "cb durch ab",
+     "cb geteilt durch ab",
+     "bc/ba",
+     "bc / ba",
+     "bc:ba",
+     "bc : ba",
+     "bc durch ba",
+     "bc geteilt durch ba",
+     "cb/ba",
+     "cb / ba",
+     "cb:ba",
+     "cb : ba",
+     "cb durch ba",
+     "cb geteilt durch ba"
+    ]
+   }
+  ],
+  "tip": "Sinus = Gegenkathete durch Hypotenuse.",
+  "sol": "<p>sin α = Gegenkathete : Hypotenuse = <b>a/c</b></p>",
+  "fig": "<svg viewBox=\"0 0 320 200\" width=\"100%\" style=\"max-width:320px\" role=\"img\" aria-label=\"Dreieck ABC mit rechtem Winkel bei C\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\" font-size=\"15\"><polygon points=\"30,170 290,170 85.4,63.5\" fill=\"#fdecea\" stroke=\"#333\" stroke-width=\"2\"/><polyline points=\"79.9,74.2 90.5,79.7 96.1,69.1\" fill=\"none\" stroke=\"#333\"/><text x=\"8\" y=\"176\">A</text><text x=\"298\" y=\"176\">B</text><text x=\"80\" y=\"54\">C</text><text x=\"196\" y=\"113\" font-style=\"italic\">a</text><text x=\"40\" y=\"117\" font-style=\"italic\">b</text><text x=\"160\" y=\"192\" font-style=\"italic\">c</text><text x=\"60\" y=\"162\">α</text><text x=\"250\" y=\"162\">β</text></svg>",
+  "alt": "Auch richtig: a : c oder BC/AB"
+ },
+ {
+  "src": "Stunde 1, A7",
+  "q": "Gib den Wert von cos 60° an.",
+  "parts": [
+   {
+    "type": "num",
+    "label": "cos 60° =",
+    "unit": "",
+    "accept": [
+     0.5
+    ]
+   }
+  ],
+  "tip": "Tippe es in den Taschenrechner (Modus DEG) oder erinnere dich an die besonderen Werte.",
+  "sol": "<p class=\"calc\">cos 60° = <b>0,5</b></p>",
+  "alt": "Auch richtig: 1/2"
+ },
+ {
+  "src": "Stunde 1, A8",
+  "q": "Dreieck ABC mit γ = 90° und α = 35°. Gib β an.",
+  "parts": [
+   {
+    "type": "num",
+    "label": "β =",
+    "unit": "°",
+    "accept": [
+     55
+    ]
+   }
+  ],
+  "tip": "Die Innenwinkel im Dreieck ergeben zusammen 180°.",
+  "sol": "<p class=\"calc\">β = 180° − 90° − 35° = <b>55°</b></p>"
+ },
+ {
+  "src": "Stunde 1, B",
+  "q": "Im Dreieck ABC gilt γ = 90°, c = 8,0 cm und α = 30°. Zeichne eine Planfigur in deinen Hefter. Berechne a, b und β.",
+  "parts": [
+   {
+    "type": "num",
+    "label": "a =",
+    "unit": "cm",
+    "accept": [
+     4
+    ],
+    "tol": 0.01
+   },
+   {
+    "type": "num",
+    "label": "b =",
+    "unit": "cm",
+    "accept": [
+     6.93,
+     6.9
+    ],
+    "tol": 0.011
+   },
+   {
+    "type": "num",
+    "label": "β =",
+    "unit": "°",
+    "accept": [
+     60
+    ]
+   }
+  ],
+  "tip": "Starte mit β, dann hast du alle Winkel. Für a passt sin α, weil c die Hypotenuse ist.",
+  "sol": "<p class=\"calc\">β = 180° − 90° − 30° = <b>60°</b></p><p><b>Weg 1: Sinussatz</b></p><p class=\"calc\">a/sin α = c/sin γ<br>a = 8,0 · sin 30° / sin 90° = 8,0 · 0,5 / 1 = <b>4,00 cm</b><br>b/sin β = c/sin γ<br>b = 8,0 · sin 60° / sin 90° ≈ <b>6,93 cm</b></p><p><b>Weg 2: Rechtwinkliges Dreieck</b></p><p class=\"calc\">sin α = a/c &nbsp;→&nbsp; a = 8,0 · sin 30° = <b>4,00 cm</b><br>cos α = b/c &nbsp;→&nbsp; b = 8,0 · cos 30° ≈ <b>6,93 cm</b><br>Probe mit Pythagoras: b = √(8,0² − 4,0²) = √48 ≈ 6,93 cm</p>",
+  "fig": "<svg viewBox=\"0 0 320 200\" width=\"100%\" style=\"max-width:320px\" role=\"img\" aria-label=\"Planfigur Dreieck ABC, rechter Winkel bei C\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\" font-size=\"15\"><polygon points=\"30,170 290,170 85.4,63.5\" fill=\"#fdecea\" stroke=\"#333\" stroke-width=\"2\"/><polyline points=\"79.9,74.2 90.5,79.7 96.1,69.1\" fill=\"none\" stroke=\"#333\"/><text x=\"8\" y=\"176\">A</text><text x=\"298\" y=\"176\">B</text><text x=\"80\" y=\"54\">C</text><text x=\"196\" y=\"113\" font-style=\"italic\">a</text><text x=\"40\" y=\"117\" font-style=\"italic\">b</text><text x=\"160\" y=\"192\" font-style=\"italic\">c</text><text x=\"60\" y=\"162\">α</text><text x=\"250\" y=\"162\">β</text></svg>",
+  "alt": "Auch richtig: a = 4 cm, b = 6,9 cm"
+ },
+ {
+  "src": "Stunde 1, C a",
+  "q": "Auf einem Spielplatz steht eine Rutsche. Die Plattform ist 2,10 m hoch, die gerade Rutschfläche ist 4,20 m lang.<br>a) Berechne den Neigungswinkel α der Rutsche.",
+  "parts": [
+   {
+    "type": "num",
+    "label": "α =",
+    "unit": "°",
+    "accept": [
+     30
+    ],
+    "tol": 0.05
+   }
+  ],
+  "tip": "Die Höhe liegt α gegenüber, die Rutschfläche ist die Hypotenuse.",
+  "sol": "<p><b>Weg 1: Sinussatz</b></p><p class=\"calc\">Der rechte Winkel liegt am Fuß der Plattform.<br>2,10/sin α = 4,20/sin 90°<br>sin α = 2,10 · sin 90° / 4,20 = 0,5<br>α = <b>30,0°</b></p><p><b>Weg 2: Rechtwinkliges Dreieck</b></p><p class=\"calc\">sin α = Gegenkathete/Hypotenuse = 2,10/4,20 = 0,5<br>α = sin⁻¹(0,5) = <b>30,0°</b></p>",
+  "fig": "<svg viewBox=\"0 0 360 210\" width=\"100%\" style=\"max-width:360px\" role=\"img\" aria-label=\"Rutsche: Plattform 2,10 m hoch, Rutschfläche 4,20 m, Neigungswinkel alpha am Boden\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\" font-size=\"15\"><line x1=\"20\" y1=\"170\" x2=\"350\" y2=\"170\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"60\" y=\"40\" width=\"9\" height=\"130\" fill=\"#c8a989\" stroke=\"#333\"/><rect x=\"25\" y=\"34\" width=\"44\" height=\"7\" fill=\"#c8a989\" stroke=\"#333\"/><polyline points=\"69,158 81,158 81,170\" fill=\"none\" stroke=\"#333\"/><line x1=\"69\" y1=\"38\" x2=\"300\" y2=\"170\" stroke=\"#e57373\" stroke-width=\"5\"/><path d=\"M265,170 A35,35 0 0 1 270,153\" fill=\"none\" stroke=\"#333\" stroke-width=\"1.5\"/><text x=\"245\" y=\"162\">α</text><line x1=\"45\" y1=\"45\" x2=\"45\" y2=\"168\" stroke=\"#333\" marker-start=\"url(#p)\" marker-end=\"url(#p)\"/><defs><marker id=\"p\" viewBox=\"0 0 10 10\" refX=\"5\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0,0 L10,5 L0,10z\"/></marker></defs><text x=\"2\" y=\"110\" font-size=\"13\">2,10 m</text><text x=\"150\" y=\"85\" transform=\"rotate(29.7 150 85)\">Rutschfläche 4,20 m</text><text x=\"95\" y=\"198\" font-size=\"12\" fill=\"#666\">(Skizze nicht maßstabsgerecht)</text></svg>"
+ },
+ {
+  "src": "Stunde 1, C b",
+  "q": "Rutsche: Plattform 2,10 m hoch, Rutschfläche 4,20 m lang.<br>b) Berechne, wie weit das Ende der Rutsche vom Fuß der Plattform entfernt ist.",
+  "parts": [
+   {
+    "type": "num",
+    "label": "Entfernung =",
+    "unit": "m",
+    "accept": [
+     3.64,
+     3.6
+    ],
+    "tol": 0.011
+   }
+  ],
+  "tip": "Gesucht ist die Seite am Boden. Du kennst schon α und zwei Seiten.",
+  "sol": "<p><b>Weg 1: Sinussatz</b></p><p class=\"calc\">Der Winkel oben an der Plattform ist 180° − 90° − 30° = 60°.<br>x/sin 60° = 4,20/sin 90°<br>x = 4,20 · sin 60° ≈ <b>3,64 m</b></p><p><b>Weg 2: Rechtwinkliges Dreieck</b></p><p class=\"calc\">Mit Pythagoras: x = √(4,20² − 2,10²) = √13,23 ≈ <b>3,64 m</b><br>oder mit cos α: x = 4,20 · cos 30° ≈ 3,64 m</p>",
+  "fig": "<svg viewBox=\"0 0 360 210\" width=\"100%\" style=\"max-width:360px\" role=\"img\" aria-label=\"Rutsche: Plattform 2,10 m hoch, Rutschfläche 4,20 m, Neigungswinkel alpha am Boden\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\" font-size=\"15\"><line x1=\"20\" y1=\"170\" x2=\"350\" y2=\"170\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"60\" y=\"40\" width=\"9\" height=\"130\" fill=\"#c8a989\" stroke=\"#333\"/><rect x=\"25\" y=\"34\" width=\"44\" height=\"7\" fill=\"#c8a989\" stroke=\"#333\"/><polyline points=\"69,158 81,158 81,170\" fill=\"none\" stroke=\"#333\"/><line x1=\"69\" y1=\"38\" x2=\"300\" y2=\"170\" stroke=\"#e57373\" stroke-width=\"5\"/><path d=\"M265,170 A35,35 0 0 1 270,153\" fill=\"none\" stroke=\"#333\" stroke-width=\"1.5\"/><text x=\"245\" y=\"162\">α</text><line x1=\"45\" y1=\"45\" x2=\"45\" y2=\"168\" stroke=\"#333\" marker-start=\"url(#p)\" marker-end=\"url(#p)\"/><defs><marker id=\"p\" viewBox=\"0 0 10 10\" refX=\"5\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0,0 L10,5 L0,10z\"/></marker></defs><text x=\"2\" y=\"110\" font-size=\"13\">2,10 m</text><text x=\"150\" y=\"85\" transform=\"rotate(29.7 150 85)\">Rutschfläche 4,20 m</text><text x=\"95\" y=\"198\" font-size=\"12\" fill=\"#666\">(Skizze nicht maßstabsgerecht)</text></svg>",
+  "alt": "Auch richtig: 364 cm oder 3,6 m"
+ },
+ {
+  "src": "Stunde 1, C c",
+  "q": "Laut Hersteller darf die Rutsche höchstens 40° steil sein. Prüfe, ob die Rutsche diese Vorgabe einhält.",
+  "parts": [
+   {
+    "type": "mc",
+    "options": [
+     "Ja, die Vorgabe wird eingehalten.",
+     "Nein, die Rutsche ist zu steil."
+    ],
+    "correct": 0
+   }
+  ],
+  "tip": "Vergleiche deinen Winkel aus a) mit 40°.",
+  "sol": "<p>α = 30° und 30° &lt; 40°. <b>Die Rutsche hält die Vorgabe ein.</b></p>"
+ },
+ {
+  "src": "Stunde 1, C d",
+  "q": "Ein Kind rutscht mit einer Geschwindigkeit von 9 km/h. Berechne, wie viele Meter es pro Sekunde zurücklegt und wie viele Sekunden es für die Rutschfläche (4,20 m) braucht.",
+  "parts": [
+   {
+    "type": "num",
+    "label": "Geschwindigkeit:",
+    "unit": "m/s",
+    "accept": [
+     2.5
+    ]
+   },
+   {
+    "type": "num",
+    "label": "Zeit:",
+    "unit": "s",
+    "accept": [
+     1.68,
+     1.7
+    ],
+    "tol": 0.011
+   }
+  ],
+  "tip": "Von km/h in m/s teilst du durch 3,6. Dann gilt Zeit = Weg : Geschwindigkeit.",
+  "sol": "<p class=\"calc\">9 km/h = 9000 m : 3600 s = <b>2,5 m/s</b><br>t = 4,20 m : 2,5 m/s = <b>1,68 s</b></p>",
+  "alt": "Auch richtig: 1,7 s"
+ }
+];
+
+const LOB = ["Hervorragend, das sitzt!", "Gut gemacht, nur noch wenige Lücken.", "Ein solider Anfang. Wiederhole die Aufgaben, die noch nicht geklappt haben.", "Hier lohnt sich noch Übung. Nutze die Tipps und Lösungsvorschläge."];
+
+const TOTAL = T.reduce((s,t)=>s+(t.points||t.parts.length),0);
+const state = T.map(t=>({checked:false, ok:t.parts.map(()=>false), mc:t.parts.map(()=>null)}));
+
+function parseNum(raw){
+  if(!raw) return NaN;
+  let s = raw.toLowerCase().replace(/\s+/g,"").replace(/[−–]/g,"-")
+    .replace(/^[a-zα-ω]+[0-9]*=/,"")
+    .replace(/[^\d.,\/-].*$/,"")
+    .replace(",",".");
+  if(/^-?\d+(\.\d+)?\/-?\d+(\.\d+)?$/.test(s)){ const [a,b]=s.split("/").map(Number); return a/b; }
+  return /^-?\d*\.?\d+$/.test(s) ? Number(s) : NaN;
+}
+function normText(raw){
+  return (raw||"").toLowerCase().trim().replace(/\s+/g," ").replace(/[.!?;:,"„“']/g,"");
+}
+
+function render(){
+  const box = document.getElementById("tasks");
+  box.innerHTML = "";
+  T.forEach((t,i)=>{
+    const el = document.createElement("article");
+    el.className = "task"; el.id = "t"+i;
+    let html = `<div class="head"><span class="num">Aufgabe ${i+1}</span><span class="src">${t.src||""}</span></div>
+      <div class="q">${t.q}</div>${t.fig?`<div>${t.fig}</div>`:""}`;
+    t.parts.forEach((p,j)=>{
+      if(p.type==="num" || p.type==="text"){
+        html += `<div class="field"><label for="in${i}_${j}">${p.label||"Antwort:"}</label>
+          <input type="text" ${p.type==="num"?'inputmode="decimal"':'class="wide"'} autocomplete="off" autocapitalize="off" spellcheck="false" id="in${i}_${j}">
+          ${p.unit?`<span class="unit">${p.unit}</span>`:""}</div>`;
+      } else {
+        html += `<div class="mc" role="group" aria-label="Antwortmöglichkeiten">${p.options.map((o,k)=>
+          `<button type="button" aria-pressed="false" data-i="${i}" data-j="${j}" data-k="${k}">${o}</button>`).join("")}</div>`;
+      }
+    });
+    html += `<div class="actions">
+        <button class="btn" type="button" data-act="check" data-i="${i}">Prüfen</button>
+        ${t.tip?`<button class="btn ghost" type="button" data-act="tip" data-i="${i}">Tipp</button>`:""}
+        <button class="btn ghost" type="button" data-act="sol" data-i="${i}" disabled title="Erst nach dem Prüfen verfügbar">Lösungsvorschlag</button>
+      </div>
+      <div class="fb" id="fb${i}" aria-live="polite"></div>
+      ${t.tip?`<div class="box tip" id="tip${i}" hidden>💡 ${t.tip}</div>`:""}
+      <div class="box sol" id="sol${i}" hidden><h4>Lösungsvorschlag</h4>${t.sol}${t.alt?`<div class="alt">${t.alt}</div>`:""}</div>`;
+    el.innerHTML = html;
+    box.appendChild(el);
+  });
+}
+
+function check(i){
+  const t=T[i], st=state[i];
+  let allOk=true, anyEmpty=false;
+  t.parts.forEach((p,j)=>{
+    let ok=false;
+    if(p.type==="num" || p.type==="text"){
+      const inp=document.getElementById(`in${i}_${j}`);
+      if(inp.value.trim()==="") anyEmpty=true;
+      if(p.type==="num"){
+        const v=parseNum(inp.value), tol=p.tol||1e-6;
+        ok = !isNaN(v) && p.accept.some(a=>Math.abs(a-v)<=tol);
+      } else {
+        const v=normText(inp.value);
+        ok = v!=="" && p.accept.some(a=>normText(a)===v);
+      }
+      inp.classList.remove("ok","no"); if(inp.value.trim()!=="") inp.classList.add(ok?"ok":"no");
+    } else {
+      const sel=st.mc[j];
+      if(sel===null) anyEmpty=true;
+      ok = sel===p.correct;
+      document.querySelectorAll(`#t${i} .mc button[data-j="${j}"]`).forEach(b=>{
+        b.classList.remove("ok","no");
+        if(+b.dataset.k===sel) b.classList.add(ok?"ok":"no");
+      });
+    }
+    st.ok[j]=ok; if(!ok) allOk=false;
+  });
+  const fb=document.getElementById("fb"+i);
+  if(anyEmpty && !allOk){ fb.className="fb no"; fb.textContent="Trage zuerst eine Antwort ein oder wähle eine aus."; return; }
+  st.checked=true;
+  fb.className="fb "+(allOk?"ok":"no");
+  if(allOk) fb.textContent="✓ Richtig! Vergleiche trotzdem deinen Weg mit dem Lösungsvorschlag.";
+  else if(st.ok.some(Boolean)) fb.textContent="Teilweise richtig. Prüfe die rot markierte Antwort noch einmal.";
+  else fb.textContent="✗ Noch nicht richtig. Schau dir den Tipp an und versuche es noch einmal.";
+  const sb=document.querySelector(`#t${i} [data-act=sol]`); sb.disabled=false; sb.removeAttribute("title");
+  document.getElementById("t"+i).classList.toggle("done",allOk);
+  updateScore();
+}
+
+function points(i){
+  const t=T[i], ok=state[i].ok;
+  if(t.points) return ok.every(Boolean)?t.points:0;
+  return ok.filter(Boolean).length;
+}
+function updateScore(){
+  const s=T.reduce((a,_,i)=>a+points(i),0);
+  document.getElementById("score").textContent=`${s} von ${TOTAL} Punkten`;
+  document.getElementById("meter").style.width=(s/TOTAL*100)+"%";
+  return s;
+}
+
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  if(b.closest(".mc")){
+    const i=+b.dataset.i, j=+b.dataset.j, k=+b.dataset.k;
+    state[i].mc[j]=k;
+    b.parentElement.querySelectorAll("button").forEach(x=>{x.setAttribute("aria-pressed",x===b?"true":"false"); x.classList.remove("ok","no");});
+    return;
+  }
+  const i=+b.dataset.i;
+  if(b.dataset.act==="check") check(i);
+  if(b.dataset.act==="tip"){ const t=document.getElementById("tip"+i); t.hidden=!t.hidden; }
+  if(b.dataset.act==="sol"){ const s=document.getElementById("sol"+i); s.hidden=!s.hidden; b.textContent=s.hidden?"Lösungsvorschlag":"Lösung ausblenden"; }
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter" && e.target.matches("input[type=text]")){ check(+e.target.id.slice(2).split("_")[0]); }
+});
+
+document.getElementById("evalBtn").addEventListener("click",()=>{
+  const s=updateScore();
+  const open=[], wrong=[];
+  T.forEach((t,i)=>{ if(!state[i].checked) open.push(i+1); else if(points(i)<(t.points||t.parts.length)) wrong.push(i+1); });
+  const pct=Math.round(s/TOTAL*100);
+  let msg=`Du hast <b>${s} von ${TOTAL} Punkten</b> erreicht (${pct} %). `;
+  msg += pct>=90?LOB[0]:pct>=70?LOB[1]:pct>=50?LOB[2]:LOB[3];
+  if(wrong.length) msg+=`<br>Noch einmal ansehen: Aufgabe ${wrong.join(", ")}.`;
+  if(open.length) msg+=`<br>Noch nicht bearbeitet: Aufgabe ${open.join(", ")}.`;
+  document.getElementById("endText").innerHTML=msg;
+});
+
+document.getElementById("reset").addEventListener("click",()=>{
+  if(!confirm("Alle Eingaben löschen und neu beginnen?")) return;
+  state.forEach(s=>{s.checked=false; s.ok=s.ok.map(()=>false); s.mc=s.mc.map(()=>null);});
+  render(); updateScore();
+  document.getElementById("endText").textContent="Bearbeite die Aufgaben und klicke dann hier auf „Auswerten“.";
+  window.scrollTo(0,0);
+});
+
+render(); updateScore();
+</script>
+</body>
+</html>
